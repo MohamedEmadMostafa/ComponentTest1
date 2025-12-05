@@ -1,91 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gravity Particles</title>
-<style>
-  body, html {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background: #000;
-  }
-  canvas {
-    display: block;
-  }
-</style>
-</head>
-<body>
-<canvas id="gravityParticles"></canvas>
 
-<script>
-const canvas = document.getElementById('gravityParticles');
-const ctx = canvas.getContext('2d');
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Particles Essentials - FX</title>
+        <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #323232;
+            border-radius: 20px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        canvas {
+            display: block;
+            border-radius: 20px;
+        }
+        /* النص الكبير في منتصف الصفحة */
+        
+        #title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffffff;
+            font-size: 64px;
+            /* كبير وواضح */
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            /* جلو خفيف للنص */
+            pointer-events: none;
+        }
+    </style>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+            rel="stylesheet">
+    </head>
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    <body>
+        <div id="title">Particles Essentials - FX</div>
+        <canvas id="gravityParticles"></canvas>
 
-const mouse = { x: canvas.width/2, y: canvas.height/2 };
+        <script>
+        const canvas = document.getElementById('gravityParticles');
+        const ctx = canvas.getContext('2d');
 
-window.addEventListener('mousemove', (e) => {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-});
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-class Particle {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.radius = Math.random() * 3 + 1;
-    this.color = `rgba(255,255,255,${Math.random()})`;
-    this.vx = 0;
-    this.vy = 0;
-  }
-  update() {
-    let dx = mouse.x - this.x;
-    let dy = mouse.y - this.y;
-    let dist = Math.sqrt(dx*dx + dy*dy);
-    let force = Math.min(dist / 1000, 0.5); // gravity strength
-    this.vx += dx * force * 0.01;
-    this.vy += dy * force * 0.01;
+        const mouse = {
+            x: canvas.width / 2,
+            y: canvas.height / 2
+        };
+        window.addEventListener('mousemove', e => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
 
-    // damping
-    this.vx *= 0.9;
-    this.vy *= 0.9;
+        class Particle {
+            constructor() {
+                this.originX = Math.random() * canvas.width;
+                this.originY = Math.random() * canvas.height;
+                this.x = this.originX;
+                this.y = this.originY;
+                this.z = Math.random() * 4 + 1;
+                this.radius = Math.random() * 2 + 1;
+                this.color = `rgba(255,255,255,${0.3 + 0.2 * Math.random()})`;
+                this.vx = 0;
+                this.vy = 0;
+                this.angle = Math.random() * Math.PI * 2;
+                this.wobbleSpeed = 0.01 + Math.random() * 0.01;
+                this.wobbleDist = 0.2 + Math.random() * 0.3;
+            }
 
-    this.x += this.vx;
-    this.y += this.vy;
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
-    ctx.fillStyle = this.color;
-    ctx.shadowColor = this.color;
-    ctx.shadowBlur = 10;
-    ctx.fill();
-  }
-}
+            update() {
+                this.angle += this.wobbleSpeed;
+                let wiggleX = Math.cos(this.angle) * this.wobbleDist;
+                let wiggleY = Math.sin(this.angle) * this.wobbleDist;
 
-const particles = [];
-for(let i=0;i<150;i++){
-  particles.push(new Particle());
-}
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let dist = Math.sqrt(dx * dx + dy * dy);
 
-function animate(){
-  ctx.clearRect(0,0,canvas.width, canvas.height);
-  for(let p of particles){
-    p.update();
-    p.draw();
-  }
-  requestAnimationFrame(animate);
-}
-animate();
+                const maxEffectDistance = 150;
+                if (dist < maxEffectDistance) {
+                    let force = (1 / this.z) * (1 - dist / maxEffectDistance) * 0.05;
+                    this.vx += dx * force;
+                    this.vy += dy * force;
+                }
 
-window.addEventListener('resize', ()=>{
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-</script>
-</body>
+                this.vx *= 0.9;
+                this.vy *= 0.9;
+
+                this.x += this.vx + wiggleX;
+                this.y += this.vy + wiggleY;
+
+                const returnSpeed = 0.02 / this.z;
+                if (dist >= maxEffectDistance) {
+                    this.x += (this.originX - this.x) * returnSpeed;
+                    this.y += (this.originY - this.y) * returnSpeed;
+                }
+            }
+
+            draw() {
+                const size = this.radius * (6 - this.z) / 3;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = size * 3;
+                ctx.fill();
+            }
+        }
+
+        const particles = [];
+        for (let i = 0; i < 250; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let p of particles) {
+                p.update();
+                p.draw();
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+    </body>
+
 </html>
