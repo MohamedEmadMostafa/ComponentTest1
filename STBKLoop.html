@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Particles Essentials - FX</title>
+
+        <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: #323232;
+            font-family: 'Caveat', cursive;
+            height: 100%;
+        }
+        /* Wrapper لعمل الـ rounded من غير ما الفيديو يختفي */
+        
+        .wrapper {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            border-radius: 20px;
+            position: relative;
+        }
+        /* فيديو الخلفية فل اسكرين */
+        
+        #bgVideo {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* النص الكبير */
+        
+        #title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffffff;
+            font-size: clamp(20px, 4.5vw, 40px);
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.4px;
+            pointer-events: none;
+            line-height: 1.1;
+            padding: 0 12px;
+            white-space: nowrap;
+            z-index: 10;
+            /* Glow قوي */
+            text-shadow: 0 0 14px rgba(255, 255, 255, 0.55), 0 0 30px rgba(255, 255, 255, 0.45), 0 0 45px rgba(255, 255, 255, 0.25);
+        }
+        
+        @media (max-width: 420px) {
+            #title {
+                white-space: normal;
+                font-size: clamp(18px, 6.5vw, 28px);
+            }
+        }
+    </style>
+
+        <link
+            href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap"
+            rel="stylesheet">
+    </head>
+
+    <body>
+
+        <div class="wrapper">
+
+            <video id="bgVideo" autoplay muted loop playsinline>
+                <source src="STLoopRed.mp4" type="video/mp4">
+            </video>
+
+            <div id="title">Particles Essentials - FX</div>
+
+        </div>
+
+    </body>
+
+</html>
