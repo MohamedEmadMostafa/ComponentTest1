@@ -28,14 +28,24 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #ffffff;
-            font-size: 64px;
-            /* كبير وواضح */
-            font-weight: 700;
+            /* responsive, smaller script font sizing */
+            font-size: clamp(20px, 4.5vw, 40px);
+            font-weight: 600;
             text-align: center;
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-            /* جلو خفيف للنص */
+            letter-spacing: 0.4px;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
             pointer-events: none;
+            line-height: 1;
+            padding: 0 12px;
+            white-space: nowrap;
+        }
+        /* ensure very small screens wrap nicely */
+        
+        @media (max-width: 420px) {
+            #title {
+                white-space: normal;
+                font-size: clamp(18px, 6.5vw, 28px);
+            }
         }
     </style>
         <link
